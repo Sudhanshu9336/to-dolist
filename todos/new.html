@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jayasharma's To-Do List | GitHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --secondary: #4A44C6;
+            --accent: #FF6584;
+            --light: #F8F9FA;
+            --dark: #2D3748;
+            --success: #48BB78;
+            --gray: #A0AEC0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--dark);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+        }
+        
+        .header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .profile {
+            display: flex;
+            align-items: center;
+        }
+        
+        .profile-pic {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid white;
+            object-fit: cover;
+            margin-right: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .profile-info h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .profile-info p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .github-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .github-badge i {
+            margin-right: 8px;
+        }
+        
+        .app-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: #F7FAFC;
+            padding: 25px 20px;
+            border-right: 1px solid #E2E8F0;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--dark);
+            text-decoration: none;
+        }
+        
+        .nav-item:hover {
+            background-color: #EDF2F7;
+        }
+        
+        .nav-item.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .nav-item i {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 25px 30px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        
+        .input-section {
+            display: flex;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .input-section input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            transition: border 0.3s;
+            padding-right: 130px;
+        }
+        
+        .input-section input:focus {
+            border-color: var(--primary);
+        }
+        
+        .input-section button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .input-section button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        .input-section button i {
+            margin-right: 8px;
+        }
+        
+        .tasks-section {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+        
+        .task {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            background-color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s;
+            animation: fadeIn 0.4s;
+        }
+        
+        .task:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .task input[type="checkbox"] {
+            margin-right: 15px;
+            transform: scale(1.3);
+            cursor: pointer;
+            accent-color: var(--success);
+        }
+        
+        .task-text {
+            flex: 1;
+            font-size: 16px;
+        }
+        
+        .task.completed .task-text {
+            text-decoration: line-through;
+            color: var(--gray);
+        }
+        
+        .task-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .task-action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--gray);
+            transition: all 0.3s;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .task-action-btn.edit:hover {
+            background: #EBF8FF;
+            color: #3182CE;
+        }
+        
+        .task-action-btn.delete:hover {
+            background: #FFF5F5;
+            color: #E53E3E;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+        
+        .empty-state i {
+            font-size: 60px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background-color: #F7FAFC;
+            padding: 15px 25px;
+            border-top: 1px solid #E2E8F0;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .app-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 15px;
+            }
+            
+            .header {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+            }
+            
+            .profile {
+                margin-bottom: 15px;
+                justify-content: center;
+            }
+            
+            .github-badge {
+                margin-top: 10px;
+            }
+            
+            .container {
+                height: auto;
+            }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="profile">
+                <!-- Replace with your actual photo URL -->
+                <img src="des.jpeg" alt="Jayasharma" class="profile-pic">
+                <div class="profile-info">
+                    <h1>Jaya Sharma</h1>
+                    <p>Drama Queen</p>
+                </div>
+            </div>
+            <a href="https://instagram.com/jayasharma" class="github-badge" target="_blank">
+                instagram.com/jayasharma <i class="fab fa-instagram"></i>
+            </a>
+        </div>
+        
+        <div class="app-content">
+            <div class="sidebar">
+                <a href="#" class="nav-item active">
+                    <i class="fas fa-tasks"></i> All Tasks
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-check-circle"></i> Completed
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-clock"></i> Pending
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-star"></i> Important
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-calendar-alt"></i> Today
+                </a>
+                <div style="margin-top: 30px;">
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fas fa-question-circle"></i> Help
+                    </a>
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <div class="input-section">
+                    <input type="text" id="taskInput" placeholder="What do you need to do today?">
+                    <button id="addTaskBtn">
+                        <i class="fas fa-plus"></i> Add Task
+                    </button>
+                </div>
+                
+                <div class="section-title">
+                    <i class="fas fa-list-check"></i> My Tasks
+                </div>
+                
+                <div class="tasks-section" id="tasksContainer">
+                    <!-- Tasks will be added here dynamically -->
+                    <div class="empty-state" id="emptyState">
+                        <i class="fas fa-clipboard-list"></i>
+                        <p>No tasks yet. Add a task to get started!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="totalTasks">0</div>
+                <div class="stat-label">Total Tasks</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="completedTasks">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="pendingTasks">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const taskInput = document.getElementById('taskInput');
+            const addTaskBtn = document.getElementById('addTaskBtn');
+            const tasksContainer = document.getElementById('tasksContainer');
+            const emptyState = document.getElementById('emptyState');
+            const totalTasksSpan = document.getElementById('totalTasks');
+            const completedTasksSpan = document.getElementById('completedTasks');
+            const pendingTasksSpan = document.getElementById('pendingTasks');
+            
+            // Load tasks from localStorage or initialize with sample tasks
+            let tasks = JSON.parse(localStorage.getItem('jayasharma-tasks')) || [
+                { text: 'Complete project proposal', completed: false, important: true },
+                { text: 'Review pull requests on GitHub', completed: true, important: true },
+                { text: 'Update portfolio website', completed: false, important: false },
+                { text: 'Prepare for meeting with client', completed: false, important: true }
+            ];
+            
+            // Load tasks from localStorage
+            function loadTasks() {
+                tasksContainer.innerHTML = '';
+                
+                if (tasks.length === 0) {
+                    emptyState.style.display = 'block';
+                } else {
+                    emptyState.style.display = 'none';
+                    
+                    tasks.forEach((task, index) => {
+                        const taskElement = createTaskElement(task, index);
+                        tasksContainer.appendChild(taskElement);
+                    });
+                }
+                
+                updateStats();
+            }
+            
+            // Create a task element
+            function createTaskElement(task, index) {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = `task ${task.completed ? 'completed' : ''}`;
+                
+                taskDiv.innerHTML = `
+                    <input type="checkbox" ${task.completed ? 'checked' : ''}>
+                    <span class="task-text">${task.text}</span>
+                    <div class="task-actions">
+                        <button class="task-action-btn edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="task-action-btn delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                
+                const checkbox = taskDiv.querySelector('input[type="checkbox"]');
+                const editBtn = taskDiv.querySelector('.edit');
+                const deleteBtn = taskDiv.querySelector('.delete');
+                
+                checkbox.addEventListener('change', function() {
+                    tasks[index].completed = this.checked;
+                    taskDiv.classList.toggle('completed', this.checked);
+                    saveTasks();
+                    updateStats();
+                });
+                
+                editBtn.addEventListener('click', function() {
+                    const newText = prompt('Edit task:', task.text);
+                    if (newText !== null && newText.trim() !== '') {
+                        tasks[index].text = newText.trim();
+                        saveTasks();
+                        loadTasks();
+                    }
+                });
+                
+                deleteBtn.addEventListener('click', function() {
+                    if (confirm('Are you sure you want to delete this task?')) {
+                        tasks.splice(index, 1);
+                        saveTasks();
+                        loadTasks();
+                    }
+                });
+                
+                return taskDiv;
+            }
+            
+            // Add a new task
+            function addTask() {
+                const text = taskInput.value.trim();
+                
+                if (text === '') {
+                    alert('Please enter a task!');
+                    return;
+                }
+                
+                tasks.push({
+                    text: text,
+                    completed: false,
+                    important: false
+                });
+                
+                saveTasks();
+                loadTasks();
+                
+                taskInput.value = '';
+                taskInput.focus();
+            }
+            
+            // Save tasks to localStorage
+            function saveTasks() {
+                localStorage.setItem('jayasharma-tasks', JSON.stringify(tasks));
+            }
+            
+            // Update task statistics
+            function updateStats() {
+                const total = tasks.length;
+                const completed = tasks.filter(task => task.completed).length;
+                const pending = total - completed;
+                
+                totalTasksSpan.textContent = total;
+                completedTasksSpan.textContent = completed;
+                pendingTasksSpan.textContent = pending;
+            }
+            
+            // Event listeners
+            addTaskBtn.addEventListener('click', addTask);
+            
+            taskInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addTask();
+                }
+            });
+            
+            // Initial load
+            loadTasks();
+        });
+    </script>
+</body>
+</html>
